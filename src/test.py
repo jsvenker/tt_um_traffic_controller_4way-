@@ -10,7 +10,7 @@ states = {
 }
 
 @cocotb.test()
-async def test_traffic_controller_4way(dut):
+async def tt_um_traffic_controller_4way(dut):
     dut._log.info("Starting the test...")
 
     # Start the clock
