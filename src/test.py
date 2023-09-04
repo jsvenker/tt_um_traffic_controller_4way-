@@ -48,7 +48,3 @@ async def test(dut):
         await check_lights(direction, red=1, green=0, yellow=0)
 
     dut._log.info("Completed traffic_controller test")
-
-# Register the test.
-factory = TestFactory(test)
-factory.generate_tests()
