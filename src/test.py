@@ -1,45 +1,54 @@
 import cocotb
-from cocotb.clock import Clock
-from cocotb.triggers import RisingEdge, FallingEdge, Timer, ClockCycles
-
-# Define the expected states: RED, GREEN, YELLOW
-states = {
-    'RED': 0b001,
-    'GREEN': 0b010,
-    'YELLOW': 0b100
-}
+from cocotb.triggers import Timer, FallingEdge
+from cocotb.regression import TestFactory
 
 @cocotb.test()
-async def tt_um_traffic_controller_4way(dut):
-    dut._log.info("Starting the test...")
+async def test(dut):
+    dut._log.info("Starting traffic_controller test")
 
-    # Start the clock
-    clock = Clock(dut.clk, 10, units="us")
-    cocotb.start_soon(clock.start())
+    # Reset procedure
+    dut.rst_n <= 0
+    await Timer(1, units='ns')
+    dut.rst_n <= 1
+    await Timer(1, units='ns')
 
-    # Reset the module
-    dut.rst_n.value = 0
-    await ClockCycles(dut.clk, 1)
-    dut.rst_n.value = 1
+    # Defining the count values based on the MAX_COUNT (10 seconds)
+    GREEN_DURATION_NS = 30e9  # 30 seconds in ns
+    YELLOW_DURATION_NS = 3e9  # 3 seconds in ns
+    RED_DURATION_NS = 10e9  # 10 seconds in ns
 
-    # Ensure it starts with RED state
-    assert dut.uo_out[1] == states['RED']
-    await ClockCycles(dut.clk, 1)
+    # Define a helper function to check the light outputs
+    async def check_lights(direction, red, green, yellow):
+        """Check the lights for a given direction."""
+        assert dut.uo_out[direction*2 + 1] == red
+        assert dut.uo_out[direction*2 + 2] == green
+        # Note: There is no individual light output for yellow, so it is derived from red and green being off
+        if yellow:
+            assert dut.uo_out[direction*2 + 1] == 0
+            assert dut.uo_out[direction*2 + 2] == 0
+        return
 
-    # Stimulate request
-    dut.ui_in.value = 0b0001
+    # For each direction, ensure lights go through the correct sequence of GREEN -> YELLOW -> RED
+    for direction in range(4):
+        dut._log.info(f"Testing direction {direction}")
 
-    # Check transitions over time
-    # Assuming the counter changes states after MAX_COUNT cycles
-    # We'll check the state after the cycle count to verify transitions
+        # Set the request for the current direction
+        dut.ui_in <= 1 << direction
 
-    await ClockCycles(dut.clk, dut.MAX_COUNT)
-    assert dut.uo_out[2] == states['GREEN'], f"Expected GREEN but got {dut.uo_out[2]}"
+        # Check for GREEN
+        await Timer(GREEN_DURATION_NS, units='ns')
+        await check_lights(direction, red=0, green=1, yellow=0)
 
-    await ClockCycles(dut.clk, dut.MAX_COUNT)
-    assert dut.uo_out[2] == states['YELLOW'], f"Expected YELLOW but got {dut.uo_out[2]}"
+        # Check for YELLOW
+        await Timer(YELLOW_DURATION_NS, units='ns')
+        await check_lights(direction, red=0, green=0, yellow=1)
 
-    await ClockCycles(dut.clk, dut.MAX_COUNT)
-    assert dut.uo_out[1] == states['RED'], f"Expected RED but got {dut.uo_out[1]}"
+        # Check for RED
+        await Timer(RED_DURATION_NS - YELLOW_DURATION_NS, units='ns')  # Subtracting yellow time as we've already waited that much
+        await check_lights(direction, red=1, green=0, yellow=0)
 
-    dut._log.info("Test completed!")
+    dut._log.info("Completed traffic_controller test")
+
+# Register the test.
+factory = TestFactory(test)
+factory.generate_tests()
