@@ -1,4 +1,4 @@
-`default_nettype none
+default_nettype none
 
 module tt_um_traffic_controller_4way #( parameter MAX_COUNT = 24'd10_000_000 ) (
     input  wire [7:0] ui_in,    
@@ -19,7 +19,7 @@ module tt_um_traffic_controller_4way #( parameter MAX_COUNT = 24'd10_000_000 ) (
               GREEN = 3'b010,
               YELLOW = 3'b100;
 
-    reg [24:0] counter = 0;  // 25 bits can represent up to MAX_COUNT
+    reg [23:0] counter = 0;  // 24 bits can represent up to MAX_COUNT
     reg [3:0] request_status;
 
     // State durations
