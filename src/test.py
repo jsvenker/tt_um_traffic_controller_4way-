@@ -2,47 +2,44 @@ import cocotb
 from cocotb.clock import Clock
 from cocotb.triggers import RisingEdge, FallingEdge, Timer, ClockCycles
 
-
-segments = [ 63, 6, 91, 79, 102, 109, 124, 7, 127, 103 ]
+# Define the expected states: RED, GREEN, YELLOW
+states = {
+    'RED': 0b001,
+    'GREEN': 0b010,
+    'YELLOW': 0b100
+}
 
 @cocotb.test()
-async def test_7seg(dut):
-    dut._log.info("start")
+async def test_traffic_controller_4way(dut):
+    dut._log.info("Starting the test...")
+
+    # Start the clock
     clock = Clock(dut.clk, 10, units="us")
     cocotb.start_soon(clock.start())
 
-    # reset
-    dut._log.info("reset")
+    # Reset the module
     dut.rst_n.value = 0
-    # set the compare value
-    dut.ui_in.value = 1
-    await ClockCycles(dut.clk, 10)
+    await ClockCycles(dut.clk, 1)
     dut.rst_n.value = 1
 
-    # the compare value is shifted 10 bits inside the design to allow slower counting
-    max_count = dut.ui_in.value << 10
-    dut._log.info(f"check all segments with MAX_COUNT set to {max_count}")
-    # check all segments and roll over
-    for i in range(15):
-        dut._log.info("check segment {}".format(i))
-        await ClockCycles(dut.clk, max_count)
-        assert int(dut.segments.value) == segments[i % 10]
+    # Ensure it starts with RED state
+    assert dut.uo_out[1] == states['RED']
+    await ClockCycles(dut.clk, 1)
 
-        # all bidirectionals are set to output
-        assert dut.uio_oe == 0xFF
+    # Stimulate request
+    dut.ui_in.value = 0b0001
 
-    # reset
-    dut.rst_n.value = 0
-    # set a different compare value
-    dut.ui_in.value = 3
-    await ClockCycles(dut.clk, 10)
-    dut.rst_n.value = 1
+    # Check transitions over time
+    # Assuming the counter changes states after MAX_COUNT cycles
+    # We'll check the state after the cycle count to verify transitions
 
-    max_count = dut.ui_in.value << 10
-    dut._log.info(f"check all segments with MAX_COUNT set to {max_count}")
-    # check all segments and roll over
-    for i in range(15):
-        dut._log.info("check segment {}".format(i))
-        await ClockCycles(dut.clk, max_count)
-        assert int(dut.segments.value) == segments[i % 10]
+    await ClockCycles(dut.clk, dut.MAX_COUNT)
+    assert dut.uo_out[2] == states['GREEN'], f"Expected GREEN but got {dut.uo_out[2]}"
 
+    await ClockCycles(dut.clk, dut.MAX_COUNT)
+    assert dut.uo_out[2] == states['YELLOW'], f"Expected YELLOW but got {dut.uo_out[2]}"
+
+    await ClockCycles(dut.clk, dut.MAX_COUNT)
+    assert dut.uo_out[1] == states['RED'], f"Expected RED but got {dut.uo_out[1]}"
+
+    dut._log.info("Test completed!")
