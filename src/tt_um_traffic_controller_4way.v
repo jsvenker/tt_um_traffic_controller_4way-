@@ -23,8 +23,8 @@ module tt_um_traffic_controller_4way #( parameter MAX_COUNT = 24'd10_000_000 ) (
     reg [3:0] request_status;
 
     // State durations
-    parameter GREEN_DURATION = 3 * MAX_COUNT;  // 30 seconds
-    parameter YELLOW_DURATION = 0.3 * MAX_COUNT;  // 3 seconds
+    parameter GREEN_DURATION = 3 * MAX_COUNT;        // 30 seconds
+    parameter YELLOW_DURATION = (MAX_COUNT * 3) / 10; // 3 seconds
 
     // Assign the bidirectional pins
     assign uio_oe = 8'b11111111;
