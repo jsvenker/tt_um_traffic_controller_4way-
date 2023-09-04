@@ -22,6 +22,10 @@ module tt_um_traffic_controller_4way #( parameter MAX_COUNT = 24'd10_000_000 ) (
     reg [24:0] counter = 0;  // 25 bits can represent up to MAX_COUNT
     reg [3:0] request_status;
 
+    // State durations
+    parameter GREEN_DURATION = 3 * MAX_COUNT;  // 30 seconds
+    parameter YELLOW_DURATION = 0.3 * MAX_COUNT;  // 3 seconds
+
     // Assign the bidirectional pins
     assign uio_oe = 8'b11111111;
     assign uio_out = 8'd0;  // Currently unused in this design
@@ -33,7 +37,9 @@ module tt_um_traffic_controller_4way #( parameter MAX_COUNT = 24'd10_000_000 ) (
             counter <= 0;
             request_status <= 4'b0;
         end else begin
-            if (counter < MAX_COUNT) begin
+            if ((state == GREEN && counter < GREEN_DURATION) || 
+                (state == YELLOW && counter < YELLOW_DURATION) || 
+                (state == RED && counter < MAX_COUNT)) begin
                 counter <= counter + 1;
             end else begin
                 counter <= 0;
