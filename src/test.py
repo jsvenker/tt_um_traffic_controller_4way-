@@ -1,32 +1,28 @@
 import cocotb
-from cocotb.triggers import Timer, FallingEdge
-from cocotb.regression import TestFactory
+from cocotb.clock import Clock
+from cocotb.triggers import Timer, ClockCycles
 
 @cocotb.test()
-async def test(dut):
-    dut._log.info("Starting traffic_controller test")
+async def test_traffic_controller(dut):
+    dut._log.info("Starting tt_um_traffic_controller_4way test")
+    clock = Clock(dut.clk, 1, units="us")  # Using a 1MHz clock
+    cocotb.start_soon(clock.start())
 
-    # Reset procedure
-    dut.rst_n <= 0
-    await Timer(1, units='ns')
-    dut.rst_n <= 1
-    await Timer(1, units='ns')
+    # Reset
+    dut.rst_n.value = 0
+    await ClockCycles(dut.clk, 10)
+    dut.rst_n.value = 1
 
     # Defining the count values based on the MAX_COUNT (10 seconds)
-    GREEN_DURATION_NS = 30e9  # 30 seconds in ns
-    YELLOW_DURATION_NS = 3e9  # 3 seconds in ns
-    RED_DURATION_NS = 10e9  # 10 seconds in ns
+    GREEN_DURATION_CYCLES = 30e6  # 30 seconds in clock cycles
+    YELLOW_DURATION_CYCLES = 3e6  # 3 seconds in clock cycles
+    RED_DURATION_CYCLES = 10e6 - GREEN_DURATION_CYCLES - YELLOW_DURATION_CYCLES  # Remaining time after subtracting green and yellow durations
 
     # Define a helper function to check the light outputs
-    async def check_lights(direction, red, green, yellow):
+    async def check_lights(direction, red, green):
         """Check the lights for a given direction."""
         assert dut.uo_out[direction*2 + 1] == red
         assert dut.uo_out[direction*2 + 2] == green
-        # Note: There is no individual light output for yellow, so it is derived from red and green being off
-        if yellow:
-            assert dut.uo_out[direction*2 + 1] == 0
-            assert dut.uo_out[direction*2 + 2] == 0
-        return
 
     # For each direction, ensure lights go through the correct sequence of GREEN -> YELLOW -> RED
     for direction in range(4):
@@ -36,15 +32,15 @@ async def test(dut):
         dut.ui_in <= 1 << direction
 
         # Check for GREEN
-        await Timer(GREEN_DURATION_NS, units='ns')
-        await check_lights(direction, red=0, green=1, yellow=0)
+        await ClockCycles(dut.clk, int(GREEN_DURATION_CYCLES))
+        await check_lights(direction, red=0, green=1)
 
         # Check for YELLOW
-        await Timer(YELLOW_DURATION_NS, units='ns')
-        await check_lights(direction, red=0, green=0, yellow=1)
+        await ClockCycles(dut.clk, int(YELLOW_DURATION_CYCLES))
+        await check_lights(direction, red=0, green=0)  # As per the design, yellow is indicated by both red and green being off
 
         # Check for RED
-        await Timer(RED_DURATION_NS - YELLOW_DURATION_NS, units='ns')  # Subtracting yellow time as we've already waited that much
-        await check_lights(direction, red=1, green=0, yellow=0)
+        await ClockCycles(dut.clk, int(RED_DURATION_CYCLES))
+        await check_lights(direction, red=1, green=0)
 
-    dut._log.info("Completed traffic_controller test")
+    dut._log.info("Completed tt_um_traffic_controller_4way test")
