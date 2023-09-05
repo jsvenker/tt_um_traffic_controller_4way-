@@ -3,7 +3,7 @@ from cocotb.clock import Clock
 from cocotb.triggers import Timer, ClockCycles
 
 @cocotb.test()
-async def test_traffic_controller(dut):
+async def tt_um_traffic_controller_4way(dut):
     dut._log.info("Starting tt_um_traffic_controller_4way test")
     clock = Clock(dut.clk, 1, units="us")  # Using a 1MHz clock
     cocotb.start_soon(clock.start())
