@@ -21,6 +21,7 @@ async def test_traffic_controller(dut):
     # Define a helper function to check the light outputs
     async def check_lights(direction, red, green):
         """Check the lights for a given direction."""
+        print(f"uo_out: {dut.uo_out.value}, direction: {direction}, Expected Green: {green}")
         assert dut.uo_out[direction*2 + 1] == red
         assert dut.uo_out[direction*2 + 2] == green
 
@@ -29,7 +30,7 @@ async def test_traffic_controller(dut):
         dut._log.info(f"Testing direction {direction}")
 
         # Set the request for the current direction
-        dut.ui_in <= 1 << direction
+        dut.ui_in.value = 1 << direction
 
         # Check for GREEN
         await ClockCycles(dut.clk, int(GREEN_DURATION_CYCLES))
@@ -42,5 +43,10 @@ async def test_traffic_controller(dut):
         # Check for RED
         await ClockCycles(dut.clk, int(RED_DURATION_CYCLES))
         await check_lights(direction, red=1, green=0)
+
+     # Reset
+    dut.rst_n.value = 0
+    await ClockCycles(dut.clk, 10)
+    dut.rst_n.value = 1
 
     dut._log.info("Completed tt_um_traffic_controller_4way test")
