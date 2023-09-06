@@ -47,3 +47,4 @@ async def test_traffic_controller(dut):
     dut.rst_n.value = 1
 
     dut._log.info("Completed tt_um_traffic_controller_4way test")
+
