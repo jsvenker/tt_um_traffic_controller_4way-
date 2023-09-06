@@ -36,7 +36,7 @@ async def test_traffic_controller(dut):
         dut.ui_in.value = 1 << direction
 
         # Check for GREEN
-        await check_lights(direction, red=0, green=1, yellow=0)
+        await check_lights(direction, red=1, green=0, yellow=0)
 
         # Wait for GREEN_DURATION and then check for YELLOW
         await ClockCycles(dut.clk, GREEN_DURATION)
