@@ -1,6 +1,6 @@
 import cocotb
 from cocotb.clock import Clock
-from cocotb.triggers import Timer, ClockCycles
+from cocotb.triggers import RisingEdge, FallingEdge, Timer, ClockCycles
 
 @cocotb.test()
 async def test_traffic_controller(dut):
@@ -12,6 +12,12 @@ async def test_traffic_controller(dut):
     dut.rst_n.value = 0
     await ClockCycles(dut.clk, 10)
     dut.rst_n.value = 1
+
+    # Duration Cycles based on the DUT's MAX_COUNT
+    MAX_COUNT = int(dut.MAX_COUNT)
+    GREEN_DURATION_CYCLES = 3 * MAX_COUNT
+    YELLOW_DURATION_CYCLES = (MAX_COUNT * 3) // 10
+    RED_DURATION_CYCLES = MAX_COUNT - (GREEN_DURATION_CYCLES + YELLOW_DURATION_CYCLES)
 
     async def check_lights(direction, red, green):
         """Check the lights for a given direction."""
@@ -47,4 +53,5 @@ async def test_traffic_controller(dut):
     dut.rst_n.value = 1
 
     dut._log.info("Completed tt_um_traffic_controller_4way test")
+
 
