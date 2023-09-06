@@ -21,7 +21,6 @@ async def test_traffic_controller(dut):
     await ClockCycles(dut.clk, 10)  # Delay for stabilization
 
     async def check_lights(direction, red, green, yellow):
-        """Check the lights for a given direction."""
         red_bit = direction*2 + 1
         green_bit = direction*2
         yellow_bit = direction*2 + 1
