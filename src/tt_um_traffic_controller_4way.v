@@ -31,27 +31,31 @@ module tt_um_traffic_controller_4way #( parameter MAX_COUNT = 24'd10_000_000 ) (
     assign uio_out = 8'd0;  // Currently unused in this design
 
     always @(posedge clk or posedge reset) begin
-        if (reset) begin
-            state <= RED;
-            current_direction <= 2'b00;
-            counter <= 0;
-            request_status <= 4'b0;
+    if (reset) begin
+        state <= RED;
+        current_direction <= 2'b00;
+        counter <= 0;
+        request_status <= 4'b0;
+    end else begin
+        request_status <= ui_in[3:0];
+
+        if (state == GREEN && counter < GREEN_DURATION) begin
+            counter <= counter + 1;
+        end else if (state == YELLOW && counter < YELLOW_DURATION) begin
+            counter <= counter + 1;
+        end else if (state == RED && counter < MAX_COUNT) begin
+            counter <= counter + 1;
         end else begin
-            if ((state == GREEN && counter < GREEN_DURATION) || 
-                (state == YELLOW && counter < YELLOW_DURATION) || 
-                (state == RED && counter < MAX_COUNT)) begin
-                counter <= counter + 1;
-            end else begin
-                counter <= 0;
-                // State transitions
-                if (state == GREEN) state <= YELLOW;
-                else if (state == YELLOW) state <= RED;
-                else if (state == RED) state <= GREEN;
-                current_direction <= (request_status[current_direction] == 1) ? current_direction : current_direction + 1'b1;
-                request_status <= ui_in[3:0];
-            end
+            counter <= 0;
+            // State transitions
+            if (state == GREEN) state <= YELLOW;
+            else if (state == YELLOW) state <= RED;
+            else if (state == RED) state <= GREEN;
+            current_direction <= (request_status[current_direction] == 1) ? current_direction : current_direction + 1'b1;
         end
     end
+end
+
 
     // Assign output status to the respective traffic lights
     assign uo_out[0] = 1'b0;  // Reserved bit
