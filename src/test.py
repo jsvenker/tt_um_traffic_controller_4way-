@@ -16,30 +16,6 @@ async def test_traffic_controller(dut):
     # Let's add a delay here to allow the traffic controller to stabilize after reset
     await ClockCycles(dut.clk, 10)
 
-    # Log the initial state of uo_in
-    dut._log.info(f"Initial uo_in: {dut.uo_in.value}")
-
-    # Log the initial state of uo_out
-    dut._log.info(f"Initial uo_out: {dut.uo_out.value}")
-
-    # Log the initial state of uio_in
-    dut._log.info(f"Initial uio_in: {dut.uio_in.value}")
-
-    # Log the initial state of uio_out
-    dut._log.info(f"Initial uio_out: {dut.uio_out.value}")
-
-    # Log the initial state of uio_oe
-    dut._log.info(f"Initial uio_oe: {dut.uio_oe.value}")
-
-    # Log the initial state of ena
-    dut._log.info(f"Initial ena: {dut.ena.value}")
-
-     # Log the initial state of clk
-    dut._log.info(f"Initial clk: {dut.clk.value}")
-
-    # Log the initial state of rst_n
-    dut._log.info(f"Initial rst_n: {dut.rst_n.value}")
-
     # Define a helper function to check the light outputs
     async def check_lights(direction, red, green, yellow):
         """Check the lights for a given direction."""
