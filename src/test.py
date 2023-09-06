@@ -20,11 +20,12 @@ async def test_traffic_controller(dut):
     dut._log.info(f"Initial uo_out: {dut.uo_out.value}")
 
     # Define a helper function to check the light outputs
-    async def check_lights(direction, red, green):
+    async def check_lights(direction, red, green, yellow):
         """Check the lights for a given direction."""
-        dut._log.info(f"uo_out: {dut.uo_out.value}, direction: {direction}, Expected Green: {green}")
+        dut._log.info(f"uo_out: {dut.uo_out.value}, uio_out: {dut.uio_out.value}, direction: {direction}, Expected Green: {green}, Expected Yellow: {yellow}")
         assert dut.uo_out[direction*2 + 1] == red
         assert dut.uo_out[direction*2] == green
+        assert dut.uio_out[direction*2 + 1] == yellow
 
     # For each direction, ensure lights go through the correct sequence of GREEN -> YELLOW -> RED
     for direction in range(4):
@@ -37,19 +38,19 @@ async def test_traffic_controller(dut):
         await ClockCycles(dut.clk, 5)
 
         # Check for GREEN
-        await check_lights(direction, red=0, green=1)
+        await check_lights(direction, red=0, green=1, yellow=0)
 
         # Wait for a few cycles before transitioning to YELLOW
         await ClockCycles(dut.clk, 5)
 
-        # Check for YELLOW (both red and green are off as per design)
-        await check_lights(direction, red=0, green=0)
+        # Check for YELLOW 
+        await check_lights(direction, red=0, green=0, yellow=1)
 
         # Wait for a few cycles before transitioning to RED
         await ClockCycles(dut.clk, 5)
 
         # Check for RED
-        await check_lights(direction, red=1, green=0)
+        await check_lights(direction, red=1, green=0, yellow=0)
 
      # Reset
     dut.rst_n.value = 0
