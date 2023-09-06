@@ -1,4 +1,4 @@
-`default_nettype none
+default_nettype none
 
 module tt_um_traffic_controller_4way #( parameter MAX_COUNT = 24'd10_000_000 ) (
     input  wire [7:0] ui_in,    
@@ -19,15 +19,14 @@ module tt_um_traffic_controller_4way #( parameter MAX_COUNT = 24'd10_000_000 ) (
               GREEN = 3'b010,
               YELLOW = 3'b100;
 
-    reg [23:0] counter = 0;  // 24 bits can represent up to MAX_COUNT
+    reg [23:0] counter = 0;
 
     // State durations
-    parameter GREEN_DURATION = 3 * MAX_COUNT;        // 30 seconds
-    parameter YELLOW_DURATION = (MAX_COUNT * 3) / 10; // 3 seconds
+    parameter GREEN_DURATION = 3 * MAX_COUNT;        
+    parameter YELLOW_DURATION = (MAX_COUNT * 3) / 10;
 
     // Assign the bidirectional pins
     assign uio_oe = 8'b11111111;
-    assign uio_out = 8'd0;  // Currently unused in this design
 
     always @(posedge clk or posedge reset) begin
         if (reset) begin
@@ -51,7 +50,6 @@ module tt_um_traffic_controller_4way #( parameter MAX_COUNT = 24'd10_000_000 ) (
                 counter <= counter + 1;
             end else begin
                 counter <= 0;
-                // State transitions
                 if (state == GREEN) state <= YELLOW;
                 else if (state == YELLOW) state <= RED;
                 else if (state == RED) state <= GREEN;
@@ -68,5 +66,15 @@ module tt_um_traffic_controller_4way #( parameter MAX_COUNT = 24'd10_000_000 ) (
     assign uo_out[5] = (current_direction == 2'b10) ? state[0] : 1'b0; // Red Light 3
     assign uo_out[6] = (current_direction == 2'b10) ? state[1] : 1'b0; // Green Light 3
     assign uo_out[7] = (current_direction == 2'b11) ? state[0] : 1'b0; // Red Light 4
+
+    // Yellow lights through bidirectional pins
+    assign uio_out[0] = 1'b0;
+    assign uio_out[1] = (current_direction == 2'b00) ? state[2] : 1'b0; // Yellow Light 1
+    assign uio_out[2] = 1'b0;
+    assign uio_out[3] = (current_direction == 2'b01) ? state[2] : 1'b0; // Yellow Light 2
+    assign uio_out[4] = 1'b0;
+    assign uio_out[5] = (current_direction == 2'b10) ? state[2] : 1'b0; // Yellow Light 3
+    assign uio_out[6] = 1'b0;
+    assign uio_out[7] = (current_direction == 2'b11) ? state[2] : 1'b0; // Yellow Light 4
 
 endmodule
