@@ -12,7 +12,11 @@ async def test_traffic_controller(dut):
     dut.rst_n.value = 0
     await ClockCycles(dut.clk, 1)
     dut.rst_n.value = 1
-
+    
+    RED = 1
+    GREEN = 1
+    YELLOW = 1
+    
     # Let's add a delay here to allow the traffic controller to stabilize after reset
     await ClockCycles(dut.clk, 10)
 
