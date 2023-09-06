@@ -20,7 +20,6 @@ module tt_um_traffic_controller_4way #( parameter MAX_COUNT = 24'd10_000_000 ) (
               YELLOW = 3'b100;
 
     reg [23:0] counter = 0;  // 24 bits can represent up to MAX_COUNT
-    reg [3:0] request_status;
 
     // State durations
     parameter GREEN_DURATION = 3 * MAX_COUNT;        // 30 seconds
@@ -31,31 +30,34 @@ module tt_um_traffic_controller_4way #( parameter MAX_COUNT = 24'd10_000_000 ) (
     assign uio_out = 8'd0;  // Currently unused in this design
 
     always @(posedge clk or posedge reset) begin
-    if (reset) begin
-        state <= RED;
-        current_direction <= 2'b00;
-        counter <= 0;
-        request_status <= 4'b0;
-    end else begin
-        request_status <= ui_in[3:0];
-
-        if (state == GREEN && counter < GREEN_DURATION) begin
-            counter <= counter + 1;
-        end else if (state == YELLOW && counter < YELLOW_DURATION) begin
-            counter <= counter + 1;
-        end else if (state == RED && counter < MAX_COUNT) begin
-            counter <= counter + 1;
-        end else begin
+        if (reset) begin
+            state <= RED;
+            current_direction <= 2'b00;
             counter <= 0;
-            // State transitions
-            if (state == GREEN) state <= YELLOW;
-            else if (state == YELLOW) state <= RED;
-            else if (state == RED) state <= GREEN;
-            current_direction <= (request_status[current_direction] == 1) ? current_direction : current_direction + 1'b1;
+        end else begin
+
+            if (ui_in[3:0] != 0) begin
+                if (ui_in[0]) current_direction <= 2'b00;
+                else if (ui_in[1]) current_direction <= 2'b01;
+                else if (ui_in[2]) current_direction <= 2'b10;
+                else if (ui_in[3]) current_direction <= 2'b11;
+                state <= GREEN;
+                counter <= 0;
+            end else if (state == GREEN && counter < GREEN_DURATION) begin
+                counter <= counter + 1;
+            end else if (state == YELLOW && counter < YELLOW_DURATION) begin
+                counter <= counter + 1;
+            end else if (state == RED && counter < MAX_COUNT) begin
+                counter <= counter + 1;
+            end else begin
+                counter <= 0;
+                // State transitions
+                if (state == GREEN) state <= YELLOW;
+                else if (state == YELLOW) state <= RED;
+                else if (state == RED) state <= GREEN;
+            end
         end
     end
-end
-
 
     // Assign output status to the respective traffic lights
     assign uo_out[0] = 1'b0;  // Reserved bit
@@ -66,6 +68,5 @@ end
     assign uo_out[5] = (current_direction == 2'b10) ? state[0] : 1'b0; // Red Light 3
     assign uo_out[6] = (current_direction == 2'b10) ? state[1] : 1'b0; // Green Light 3
     assign uo_out[7] = (current_direction == 2'b11) ? state[0] : 1'b0; // Red Light 4
-    // Note: No Green Light 4 due to constraint on the number of output pins
 
 endmodule
