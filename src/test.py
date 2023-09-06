@@ -22,9 +22,12 @@ async def test_traffic_controller(dut):
 
     async def check_lights(direction, red, green, yellow):
         """Check the lights for a given direction."""
-        assert dut.uo_out[direction*2 + 1] == red
-        assert dut.uo_out[direction*2] == green
-        assert dut.uio_out[direction*2 + 1] == yellow
+        red_bit = direction*2 + 1
+        green_bit = direction*2
+        yellow_bit = direction*2 + 1
+        assert dut.uo_out[red_bit].value.integer == red, f"Red light assertion failed for direction {direction}. Expected {red}, got {dut.uo_out[red_bit].value.integer}"
+        assert dut.uo_out[green_bit].value.integer == green, f"Green light assertion failed for direction {direction}. Expected {green}, got {dut.uo_out[green_bit].value.integer}"
+        assert dut.uio_out[yellow_bit].value.integer == yellow, f"Yellow light assertion failed for direction {direction}. Expected {yellow}, got {dut.uio_out[yellow_bit].value.integer}"
 
     for direction in range(4):
         dut._log.info(f"Testing direction {direction}")
