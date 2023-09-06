@@ -7,7 +7,7 @@ async def test_traffic_controller(dut):
     dut._log.info("Starting tt_um_traffic_controller_4way test")
     
     # Parameters
-    MAX_COUNT = int(dut.MAX_COUNT.value)
+    MAX_COUNT = 10_000_000  # Defined explicitly
     GREEN_DURATION = 3 * MAX_COUNT
     YELLOW_DURATION = (MAX_COUNT * 3) // 10
     
