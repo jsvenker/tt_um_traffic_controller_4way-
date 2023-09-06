@@ -12,13 +12,14 @@ async def test_traffic_controller(dut):
     YELLOW_DURATION = (MAX_COUNT * 3) // 10
     
     clock = Clock(dut.clk, 1, units="us")  # Assuming a 1MHz clock for simplicity
-    cocotb.start_soon(clock.start())
+    cocotb.start_soon(clock.start())  # Start the clock immediately
 
-    # Reset sequence
+    # Initialization sequence
+    dut.ui_in.value = 0
     dut.rst_n.value = 0
-    await ClockCycles(dut.clk, 1)
+    await ClockCycles(dut.clk, 10)  # Hold reset active for 10 cycles
     dut.rst_n.value = 1
-    await ClockCycles(dut.clk, 10)  # Delay for stabilization
+    await ClockCycles(dut.clk, 10)  # Allow for stabilization after reset
 
     async def check_lights(direction, red, green, yellow):
         red_bit = direction*2 + 1
@@ -45,7 +46,7 @@ async def test_traffic_controller(dut):
         await ClockCycles(dut.clk, YELLOW_DURATION)
         await check_lights(direction, red=1, green=0, yellow=0)
 
-    # Reset sequence
+    # Reset sequence to end the test
     dut.rst_n.value = 0
     await ClockCycles(dut.clk, 10)
     dut.rst_n.value = 1
