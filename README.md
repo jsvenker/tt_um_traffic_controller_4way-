@@ -15,6 +15,7 @@ The idea behind this project was to migrate an undergraduate FPGA-based HDL lab 
 
 ## Image of GDS
 [3D Viewer](https://gds-viewer.tinytapeout.com/?model=https://jsvenker.github.io/tt_um_traffic_controller_4way-/tinytapeout.gds.gltf)
+<br>
 Commands:
 <br>
     1 Hides Filler
