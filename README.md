@@ -63,34 +63,64 @@ The Python cocotb testbench sets up a simulation for the traffic light controlle
     If the LEDs light up according to the expected behavior of the traffic light states, the design works as intended in a real-life setting.
     
   ## I/O
+  <br> 
   In:
+  <br> 
     ui_in - 8-bit input that selects the current traffic direction. Each of the lower 4 bits represents a direction. Setting a bit to '1' activates the corresponding direction. For example...
+    <br> 
     ui_in[0] - Direction 1
+    <br> 
     ui_in[1] - Direction 2
+    <br> 
     ui_in[2] - Direction 3
+    <br> 
     ui_in[3] - Direction 4
+    <br> 
     uio_in - 8-bit bidirectional input, currently unused in this design.
+    <br> 
     ena - Enable signal. When set to '1', the traffic controller is active. When set to '0', the controller is inactive.
+    <br> 
     clk - Clock signal. It regulates the operation of the state machine and other sequential elements in the design.
+    <br> 
     rst_n - Reset signal. When set to '0', the design resets and initializes to the RED state with the default direction. When set to '1', the design operates normally.
+    <br> 
   Out:
+  <br> 
     uo_out - 8-bit output signal representing the RED and GREEN light states for each direction. The encoding is as follows...
+    <br> 
     uo_out[0] - Reserved bit, always '0'
+    <br> 
     uo_out[1] - RED light for Direction 1
+    <br> 
     uo_out[2] - GREEN light for Direction 1
+    <br> 
     uo_out[3] - RED light for Direction 2
+    <br> 
     uo_out[4] - GREEN light for Direction 2
+    <br> 
     uo_out[5] - RED light for Direction 3
+    <br> 
     uo_out[6] - GREEN light for Direction 3
+    <br> 
     uo_out[7] - RED light for Direction 4
+    <br> 
   Bi-Dir:
+  <br> 
     uio_out[0] - Reserved bit, always '0'
+    <br> 
     uio_out[1] - YELLOW light for Direction 1
+    <br> 
     uio_out[2] - Reserved bit, always '0'
+    <br> 
     uio_out[3] - YELLOW light for Direction 2
+    <br> 
     uio_out[4] - Reserved bit, always '0'
+    <br> 
     uio_out[5] - YELLOW light for Direction 3
+    <br> 
     uio_out[6] - Reserved bit, always '0'
+    <br> 
     uio_out[7] - YELLOW light for Direction 4
+    <br> 
     uio_oe - 8-bit output enable signal for the bidirectional pins. All bits are set to '1' to enable the uio_out pins.
 
