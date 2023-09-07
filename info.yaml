@@ -49,25 +49,25 @@ how_to_test:
   Disabling the traffic controller.
   The test completes after running all input patterns.
 
-Simple Test Using a Breadboard...
+  Simple Test Using a Breadboard...
 
-Connect the Verilog module's outputs to LED indicators on a breadboard.
-uo_out[1] to uo_out[7] pins can be connected to 7 LEDs representing the RED and GREEN lights for four directions.
-uio_out[1], uio_out[3], uio_out[5], and uio_out[7] pins can be connected to 4 LEDs representing the YELLOW lights for each direction.
-Connect the clock input (clk) to a clock source, like an oscillator.
-Connect the rst_n pin to a push-button for manual reset.
+  Connect the Verilog module's outputs to LED indicators on a breadboard.
+  uo_out[1] to uo_out[7] pins can be connected to 7 LEDs representing the RED and GREEN lights for four directions.
+  uio_out[1], uio_out[3], uio_out[5], and uio_out[7] pins can be connected to 4 LEDs representing the YELLOW lights for each direction.
+  Connect the clock input (clk) to a clock source, like an oscillator.
+  Connect the rst_n pin to a push-button for manual reset.
 
-Power on the design.
-Press the reset button.
-Use a set of switches to manually set values for ui_in (ranging from 0x01 to 0x08) to select different directions.
-Observe the LEDs turning ON/OFF, representing different states of the traffic lights for the chosen direction.
-Repeat the process for different ui_in values.
+  Power on the design.
+  Press the reset button.
+  Use a set of switches to manually set values for ui_in (ranging from 0x01 to 0x08) to select different directions.
+  Observe the LEDs turning ON/OFF, representing different states of the traffic lights for the chosen direction.
+  Repeat the process for different ui_in values.
 
-If the LEDs light up according to the expected behavior of the traffic light states, the design works as intended in a real-life setting.
+  If the LEDs light up according to the expected behavior of the traffic light states, the design works as intended in a real-life setting.
 
 # A description of what the inputs do (e.g. red button, SPI CLK, SPI MOSI, etc).
   inputs:               
-    ui_in: 8-bit input that selects the current traffic direction. Each of the lower 4 bits represents a direction. Setting a bit to '1' activates the corresponding direction. For example:
+    ui_in - 8-bit input that selects the current traffic direction. Each of the lower 4 bits represents a direction. Setting a bit to '1' activates the corresponding direction. For example...
     ui_in[0] - Direction 1
     ui_in[1] - Direction 2
     ui_in[2] - Direction 3
