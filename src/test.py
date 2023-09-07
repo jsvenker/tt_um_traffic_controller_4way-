@@ -39,12 +39,12 @@ async def test_traffic_controller(dut):
         await check_lights(direction, red=1, green=0, yellow=0)
 
         # Wait for GREEN_DURATION and then check for YELLOW
-        await ClockCycles(dut.clk, GREEN_DURATION)
-        await check_lights(direction, red=0, green=0, yellow=1)
+        await ClockCycles(dut.clk, RED_DURATION)
+        await check_lights(direction, red=0, green=1, yellow=0)
 
         # Wait for YELLOW_DURATION, then check for RED
-        await ClockCycles(dut.clk, YELLOW_DURATION)
-        await check_lights(direction, red=1, green=0, yellow=0)
+        await ClockCycles(dut.clk, GREEN_DURATION)
+        await check_lights(direction, red=0, green=0, yellow=1)
 
     # Reset sequence to end the test
     dut.rst_n.value = 0
