@@ -16,9 +16,13 @@ The idea behind this project was to migrate an undergraduate FPGA-based HDL lab 
 ## Image of GDS
 [3D Viewer](https://gds-viewer.tinytapeout.com/?model=https://jsvenker.github.io/tt_um_traffic_controller_4way-/tinytapeout.gds.gltf)
 Commands:
+<br>
     1 Hides Filler
+    <br>
     2 Hides Routing (external to standard cells)
+    <br>
     3 Displays currently selected cell
+    <br>
 
 ![alt text](https://camo.githubusercontent.com/b1827335b1c1d7af2dcc2cf95eecef3b55e8fc3982cd5316e1bb088c4de19229/68747470733a2f2f6a7376656e6b65722e6769746875622e696f2f74745f756d5f747261666669635f636f6e74726f6c6c65725f347761792d2f6764735f72656e6465722e706e67)
 
