@@ -26,7 +26,7 @@ documentation:
   description:  "traffic light controller in verilog"
 
 # Longer description of how the project works. You can use standard markdown format.
-how_it_works: |
+  how_it_works: |
   The design is a Verilog-based module called tt_um_traffic_controller_4way. It represents a 4-way traffic controller that manages the state (Red, Green, Yellow) of traffic lights at an intersection. Each direction (north, south, east, west) is represented by a binary code and has individual red, green, and yellow lights.
 
   How the Design Works
@@ -40,7 +40,7 @@ how_it_works: |
   The system accepts inputs (ui_in) to select the current direction (north, south, east, west), which dictates which set of traffic lights are active.
 
 # Instructions on how someone could test your project, include things like what buttons do what and how to set the clock if needed
-how_to_test: |
+  how_to_test: |
   The Python cocotb testbench sets up a simulation for the traffic light controller. The simulation includes...
   Creating a clock with a period of 1us.
   Resetting the DUT (Device Under Test).
@@ -67,21 +67,21 @@ how_to_test: |
 
 # A description of what the inputs do (e.g. red button, SPI CLK, SPI MOSI, etc).
   inputs:                
-    - ui_in - 8-bit input that selects the current traffic direction. Each of the lower 4 bits represents a direction. Setting a bit to '1' activates the corresponding direction. For example...
-    - ui_in[0] - Direction 1
-    - ui_in[1] - Direction 2
-    - ui_in[2] - Direction 3
-    - ui_in[3] - Direction 4
-    - uio_in - 8-bit bidirectional input, currently unused in this design.
-    - ena - Enable signal. When set to '1', the traffic controller is active. When set to '0', the controller is inactive.
-    - clk - Clock signal. It regulates the operation of the state machine and other sequential elements in the design.
-    - rst_n - Reset signal. When set to '0', the design resets and initializes to the RED state with the default direction. When set to '1', the design operates normally.
+    ui_in - 8-bit input that selects the current traffic direction. Each of the lower 4 bits represents a direction. Setting a bit to '1' activates the corresponding direction. For example...
+    ui_in[0] - Direction 1
+    ui_in[1] - Direction 2
+    ui_in[2] - Direction 3
+    ui_in[3] - Direction 4
+    uio_in - 8-bit bidirectional input, currently unused in this design.
+    ena - Enable signal. When set to '1', the traffic controller is active. When set to '0', the controller is inactive.
+    clk - Clock signal. It regulates the operation of the state machine and other sequential elements in the design.
+    rst_n - Reset signal. When set to '0', the design resets and initializes to the RED state with the default direction. When set to '1', the design operates normally.
 # A description of what the outputs do (e.g. status LED, SPI MISO, etc)
   outputs: 
-    - uo_out - 8-bit output signal representing the RED and GREEN light states for each direction. The encoding is as follows...
-    - uo_out[0] - Reserved bit, always '0'
-    - uo_out[1] - RED light for Direction 1
-    - uo_out[2] - GREEN light for Direction 1
+    uo_out - 8-bit output signal representing the RED and GREEN light states for each direction. The encoding is as follows...
+    uo_out[0] - Reserved bit, always '0'
+    uo_out[1] - RED light for Direction 1
+    uo_out[2] - GREEN light for Direction 1
     uo_out[3] - RED light for Direction 2
     uo_out[4] - GREEN light for Direction 2
     uo_out[5] - RED light for Direction 3
