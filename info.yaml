@@ -26,7 +26,7 @@ documentation:
   description:  "traffic light controller in verilog"
 
 # Longer description of how the project works. You can use standard markdown format.
-how_it_works: 
+how_it_works: |
   The design is a Verilog-based module called tt_um_traffic_controller_4way. It represents a 4-way traffic controller that manages the state (Red, Green, Yellow) of traffic lights at an intersection. Each direction (north, south, east, west) is represented by a binary code and has individual red, green, and yellow lights.
 
   How the Design Works
@@ -40,7 +40,7 @@ how_it_works:
   The system accepts inputs (ui_in) to select the current direction (north, south, east, west), which dictates which set of traffic lights are active.
 
 # Instructions on how someone could test your project, include things like what buttons do what and how to set the clock if needed
-how_to_test:  
+how_to_test: |
   The Python cocotb testbench sets up a simulation for the traffic light controller. The simulation includes...
   Creating a clock with a period of 1us.
   Resetting the DUT (Device Under Test).
