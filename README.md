@@ -36,8 +36,7 @@ Commands:
 - [Join the community](https://discord.gg/rPK2nSjxy8)
 
 ## Description
-The design is a Verilog-based module called tt_um_traffic_controller_4way. It represents a 4-way traffic controller that manages the state (Red, Green, Yellow) of traffic lights at an   
-intersection. Each direction (north, south, east, west) is represented by a binary code and has individual red, green, and yellow lights.
+The design is a Verilog-based module called tt_um_traffic_controller_4way. It represents a 4-way traffic controller that manages the state (Red, Green, Yellow) of traffic lights at an intersection. Each direction (north, south, east, west) is represented by a binary code and has individual red, green, and yellow lights.
 
 
 ## How the Design Works
