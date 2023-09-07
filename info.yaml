@@ -23,52 +23,86 @@ documentation:
   author:       "John S. Venker"
   title:        "Traffic Controller 4way"
   language:     "Verilog"
-  description:  "Very simple traffic light controller in verilog"
+  description:  "traffic light controller in verilog"
 
 # Longer description of how the project works. You can use standard markdown format.
   how_it_works: |
-     Ask chat gpt. Basically, it outputs a binary code to reprsent what state a given light is in, incrementing every ten seconds. 
+The design is a Verilog-based module called tt_um_traffic_controller_4way. It represents a 4-way traffic controller that manages the state (Red, Green, Yellow) of traffic lights at an intersection. Each direction (north, south, east, west) is represented by a binary code and has individual red, green, and yellow lights.
+
+How the Design Works:
+
+The module uses a 24-bit counter to manage the state durations. Three states are defined: RED, GREEN, and YELLOW, with corresponding durations.
+
+Bidirectional pins (uio_out) control the Yellow lights, while unidirectional output pins (uo_out) manage the Red and Green lights. The direction of traffic is indicated by the current_direction register.
+
+A reset signal is used to set the system to its initial state. The controller then sequences through the traffic light states based on the current value of the counter and the direction of traffic.
+
+The system accepts inputs (ui_in) to select the current direction (north, south, east, west), which dictates which set of traffic lights are active.
 
 # Instructions on how someone could test your project, include things like what buttons do what and how to set the clock if needed
-  how_to_test:  |
-      After reset, the counter should increase by one every second with a 1MHz input clock.
-      Experiment by changing the inputs to change the counting speed.
+  how_to_test:  
+The Python cocotb testbench sets up a simulation for the traffic light controller. The simulation includes:
+Creating a clock with a period of 1us.
+Resetting the DUT (Device Under Test).
+Enabling the traffic controller.
+Iteratively applying different input patterns (0x01, 0x02, 0x04, 0x08) to ui_in to simulate selecting different directions. For each pattern, the test waits for 5 clock cycles and then logs the outputs uo_out and uio_out.
+Disabling the traffic controller.
+The test completes after running all input patterns.
+
+Simple Test Using a Breadboard:
+
+Connect the Verilog module's outputs to LED indicators on a breadboard.
+uo_out[1] to uo_out[7] pins can be connected to 7 LEDs representing the RED and GREEN lights for four directions.
+uio_out[1], uio_out[3], uio_out[5], and uio_out[7] pins can be connected to 4 LEDs representing the YELLOW lights for each direction.
+Connect the clock input (clk) to a clock source, like an oscillator.
+Connect the rst_n pin to a push-button for manual reset.
+
+Power on the design.
+Press the reset button.
+Use a set of switches to manually set values for ui_in (ranging from 0x01 to 0x08) to select different directions.
+Observe the LEDs turning ON/OFF, representing different states of the traffic lights for the chosen direction.
+Repeat the process for different ui_in values.
+
+If the LEDs light up according to the expected behavior of the traffic light states, the design works as intended in a real-life setting.
 
 # A description of what the inputs do (e.g. red button, SPI CLK, SPI MOSI, etc).
   inputs:               
-    - compare bit 11
-    - compare bit 12
-    - compare bit 13
-    - compare bit 14
-    - compare bit 15
-    - compare bit 16
-    - compare bit 17
-    - compare bit 18
+    ui_in: 8-bit input that selects the current traffic direction. Each of the lower 4 bits represents a direction. Setting a bit to '1' activates the corresponding direction. For example:
+    ui_in[0]: Direction 1
+    ui_in[1]: Direction 2
+    ui_in[2]: Direction 3
+    ui_in[3]: Direction 4
+    uio_in: 8-bit bidirectional input, currently unused in this design.
+    ena: Enable signal. When set to '1', the traffic controller is active. When set to '0', the controller is inactive.
+    clk: Clock signal. It regulates the operation of the state machine and other sequential elements in the design.
+    rst_n: Reset signal. When set to '0', the design resets and initializes to the RED state with the default direction. When set to '1', the design operates normally.
 # A description of what the outputs do (e.g. status LED, SPI MISO, etc)
   outputs:
-    - segment a
-    - segment b
-    - segment c
-    - segment d
-    - segment e
-    - segment f
-    - segment g
-    - dot
+    uo_out: 8-bit output signal representing the RED and GREEN light states for each direction. The encoding is as follows:
+    uo_out[0]: Reserved bit, always '0'
+    uo_out[1]: RED light for Direction 1
+    uo_out[2]: GREEN light for Direction 1
+    uo_out[3]: RED light for Direction 2
+    uo_out[4]: GREEN light for Direction 2
+    uo_out[5]: RED light for Direction 3
+    uo_out[6]: GREEN light for Direction 3
+    uo_out[7]: RED light for Direction 4
 # A description of what the bidirectional I/O pins do (e.g. I2C SDA, I2C SCL, etc)
   bidirectional:
-    - second counter bit 0
-    - second counter bit 1
-    - second counter bit 2
-    - second counter bit 3
-    - second counter bit 4
-    - second counter bit 5
-    - second counter bit 6
-    - second counter bit 7
+    uio_out[0]: Reserved bit, always '0'
+    uio_out[1]: YELLOW light for Direction 1
+    uio_out[2]: Reserved bit, always '0'
+    uio_out[3]: YELLOW light for Direction 2
+    uio_out[4]: Reserved bit, always '0'
+    uio_out[5]: YELLOW light for Direction 3
+    uio_out[6]: Reserved bit, always '0'
+    uio_out[7]: YELLOW light for Direction 4
+    uio_oe: 8-bit output enable signal for the bidirectional pins. All bits are set to '1' to enable the uio_out pins.
 
 # The following fields are optional
   tag:          "timer, test"      # comma separated list of tags: test, encryption, experiment, clock, animation, utility, industrial, pwm, fpga, alu, microprocessor, risc, riscv, sensor, signal generator, fft, filter, music, bcd, sound, serial, timer, random number generator, calculator, decoder, counter, puzzle, multiplier, game, oscillator,
   external_hw:  ""      # Describe any external hardware needed
-  discord:      "mattvenn"      # Your discord handle, used for communication and automatically assigning tapeout role after a submission
+  discord:      "biblicallyAccurateToolEnjoyer"      # Your discord handle, used for communication and automatically assigning tapeout role after a submission
   doc_link:     ""      # URL to longer form documentation, eg the README.md in your repository
   clock_hz:     10000000       # Clock frequency in Hz (if required)
   picture:      ""      # relative path to a picture in your repository
