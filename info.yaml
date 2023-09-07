@@ -33,7 +33,7 @@ how_it_works:
 
   The module uses a 24-bit counter to manage the state durations. Three states are defined, RED, GREEN, and YELLOW, with corresponding durations.
 
-   Bidirectional pins (uio_out) control the Yellow lights, while unidirectional output pins (uo_out) manage the Red and Green lights. The direction of traffic is indicated by the current_direction register.
+  Bidirectional pins (uio_out) control the Yellow lights, while unidirectional output pins (uo_out) manage the Red and Green lights. The direction of traffic is indicated by the current_direction register.
 
   A reset signal is used to set the system to its initial state. The controller then sequences through the traffic light states based on the current value of the counter and the direction of traffic.
 
