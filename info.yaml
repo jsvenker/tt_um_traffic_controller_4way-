@@ -66,7 +66,7 @@ how_to_test: |
   If the LEDs light up according to the expected behavior of the traffic light states, the design works as intended in a real-life setting.
 
 # A description of what the inputs do (e.g. red button, SPI CLK, SPI MOSI, etc).
-  inputs:               
+  inputs: |               
     ui_in - 8-bit input that selects the current traffic direction. Each of the lower 4 bits represents a direction. Setting a bit to '1' activates the corresponding direction. For example...
     ui_in[0] - Direction 1
     ui_in[1] - Direction 2
@@ -77,7 +77,7 @@ how_to_test: |
     clk - Clock signal. It regulates the operation of the state machine and other sequential elements in the design.
     rst_n - Reset signal. When set to '0', the design resets and initializes to the RED state with the default direction. When set to '1', the design operates normally.
 # A description of what the outputs do (e.g. status LED, SPI MISO, etc)
-  outputs:
+  outputs: |
     uo_out - 8-bit output signal representing the RED and GREEN light states for each direction. The encoding is as follows...
     uo_out[0] - Reserved bit, always '0'
     uo_out[1] - RED light for Direction 1
@@ -88,7 +88,7 @@ how_to_test: |
     uo_out[6] - GREEN light for Direction 3
     uo_out[7] - RED light for Direction 4
 # A description of what the bidirectional I/O pins do (e.g. I2C SDA, I2C SCL, etc)
-  bidirectional:
+  bidirectional: |
     uio_out[0] - Reserved bit, always '0'
     uio_out[1] - YELLOW light for Direction 1
     uio_out[2] - Reserved bit, always '0'
